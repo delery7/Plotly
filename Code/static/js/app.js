@@ -1,16 +1,26 @@
 // python -m http.server
 
-function filterOTUs(otu) {
-  return parseInt(city.Increase_from_2016) > 15000;
-}
 
 function buildPlot() {
 
   d3.json("samples.json").then(function(data) {
+   
+    function filterTop10(OTUs) {
+      return parseInt(data.samples[0].sample_values) > 100;
+    }
     
+    var filteredSampleValues = data.samples[0].sample_values.filter(filterTop10);
+    var filtered_otu_ids = data.samples[0].otu_ids.filter(filterTop10);
+    var filtered_otu_labels =data.samples[0].otu_labels.filter(filterTop10);
+
     var sampleValues = data.samples[0].sample_values;
     var otu_ids = data.samples[0].otu_ids;
     var otu_labels =data.samples[0].otu_labels;
+
+    // var barSampleValues = filteredSampleValues.map(OTUs => data.samples[0].sample_values)
+    console.log(otu_ids);
+    console.log(filteredSampleValues);
+    // console.log(barSampleValues);
 
     var metaID = data.metadata[0].id;
     var ethnicity = data.metadata[0].ethnicity;
@@ -41,9 +51,9 @@ function buildPlot() {
 
     var trace1 = {
       type: "bar",
-      text: otu_labels,
-      x: otu_ids,
-      y: sampleValues,
+      text: filtered_otu_labels,
+      x: filteredSampleValues,
+      y: toString(filtered_otu_ids),
     };
 
     var trace2 = {
@@ -64,6 +74,8 @@ function buildPlot() {
     var layout = {
         title: "Sample Data",
         barmode: "group",
+        xaxis: { title: "Sample Values" },
+        yaxis: { title: "OTU Id" },
         height: 600,
         width: 1200
       };
